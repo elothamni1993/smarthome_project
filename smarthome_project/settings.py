@@ -122,3 +122,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Cette ligne est requise pour le déploiement
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Active Whitenoise pour servir les fichiers statiques
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
