@@ -7,3 +7,5 @@ routes:
 build:
   buildCommand: pip install -r requirements.txt
   startCommand: gunicorn smarthome_project.wsgi:application
+  dockerfile: Dockerfile
+  dockerfilePath: .
