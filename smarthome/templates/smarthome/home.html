@@ -1,0 +1,50 @@
+{% extends 'smarthome/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card border-primary h-100 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">💡 Lights</h5>
+          <p class="card-text">Control your lighting remotely with ease.</p>
+          <a href="#" class="btn btn-outline-primary w-100">Control Lights</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card border-success h-100 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">🪟 Curtains</h5>
+          <p class="card-text">Open or close curtains automatically.</p>
+          <a href="#" class="btn btn-outline-success w-100">Control Curtains</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card border-info h-100 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">🌊 Pool</h5>
+          <p class="card-text">Check and adjust water level and temperature.</p>
+          <a href="#" class="btn btn-outline-info w-100">Manage Pool</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card border-dark h-100 shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">🚪 Garage</h5>
+          <p class="card-text">Open and close your garage door remotely.</p>
+          <a href="#" class="btn btn-outline-dark w-100">Control Garage</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

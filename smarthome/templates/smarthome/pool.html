@@ -1,0 +1,107 @@
+{% extends 'smarthome/base.html' %}
+{% load static %}
+
+{% block title %}Piscine{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">🏊 Gestion de la Piscine</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <!-- Carte niveau d'eau -->
+      <div class="card shadow text-center">
+        <div class="card-body">
+          <h5 class="card-title">💧 Niveau d'eau</h5>
+
+          <div class="pool-container mx-auto mb-3" style="position: relative; height: 200px; width: 100%; border: 2px solid #007BFF; border-radius: 20px; overflow: hidden; background: #e6f7ff;">
+            <div class="water" style="position: absolute; bottom: 0; left: 0; width: 100%; background-color: #00bfff; transition: height 0.5s ease; height: {{ pool.level }}%;">
+              <div style="position: absolute; top: 10px; width: 100%; text-align: center; color: white; font-weight: bold;">
+                {{ pool.level }}%
+              </div>
+            </div>
+          </div>
+
+          <form method="POST" class="d-flex justify-content-around">
+            {% csrf_token %}
+            <button name="refill" class="btn btn-success">Remplir 🔄</button>
+            <button name="drain" class="btn btn-danger">Vider ⛔</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Carte température -->
+      <div class="card mt-4 shadow text-center">
+        <div class="card-body">
+          <h5 class="card-title">🌡️ Température de l'eau</h5>
+
+          <!-- Thermomètre -->
+          <div class="thermometer mx-auto my-3">
+            <div class="mercury {% if pool.temperature > pool.target_temperature %}overheat{% endif %}" style="height: {{ pool.temperature|floatformat:0 }}%;"></div>
+            <span class="thermo-value">{{ pool.temperature }}°C</span>
+          </div>
+
+          <!-- Alerte -->
+          {% if pool.temperature > pool.target_temperature %}
+            <div class="alert alert-warning mt-2">⚠️ La température dépasse la cible !</div>
+          {% endif %}
+
+          <!-- Réglage température -->
+          <form method="POST" class="mb-3">
+            {% csrf_token %}
+            <input type="range" name="temperature" class="form-range" min="15" max="40" value="{{ pool.target_temperature }}" oninput="this.nextElementSibling.value = this.value + ' °C'">
+            <output>{{ pool.target_temperature }} °C</output>
+            <button type="submit" class="btn btn-outline-primary mt-2">Ajuster la Température 🎯</button>
+          </form>
+
+          <!-- Chauffage -->
+          <form method="POST" class="d-flex justify-content-between">
+            {% csrf_token %}
+            <button name="toggle_heater" class="btn {% if pool.heater_on %}btn-danger{% else %}btn-success{% endif %}">
+              {% if pool.heater_on %}Désactiver Chauffage{% else %}Activer Chauffage{% endif %}
+            </button>
+            <select name="heater_type" class="form-select w-50 ms-2" onchange="this.form.submit()">
+              <option value="electrique" {% if pool.heater_type == 'electrique' %}selected{% endif %}>Électrique</option>
+              <option value="gaz" {% if pool.heater_type == 'gaz' %}selected{% endif %}>Gaz</option>
+            </select>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Styles -->
+<style>
+  .thermometer {
+    width: 50px;
+    height: 200px;
+    border: 2px solid #aaa;
+    border-radius: 25px;
+    background: #eee;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mercury {
+    background-color: #0dcaf0;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    transition: height 0.5s ease;
+  }
+
+  .mercury.overheat {
+    background-color: red;
+  }
+
+  .thermo-value {
+    display: block;
+    margin-top: 8px;
+    font-weight: bold;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'smarthome/base.html' %}
+{% load static %}
+
+{% block title %}Garage{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center">🚗 Contrôle du Garage</h2>
+
+  <div class="garage-wrapper my-4">
+    <div class="garage-container">
+      <!-- Lumière clignotante -->
+      <div id="warningLight" class="blinking-light"></div>
+
+      <!-- Panneaux du garage -->
+      <div class="garage-panel panel-1"></div>
+      <div class="garage-panel panel-2"></div>
+      <div class="garage-panel panel-3"></div>
+      <div class="garage-panel panel-4"></div>
+      <div class="garage-panel panel-5"></div>
+      <div class="garage-panel panel-6"></div>
+
+      <!-- Son d'ouverture/fermeture -->
+      <audio id="garageSound" src="{% static 'garage/garage-sound.mp3' %}"></audio>
+    </div>
+  </div>
+
+  <form method="POST" class="text-center">
+    {% csrf_token %}
+    <button id="toggleBtn" class="btn {% if door_open %}btn-danger{% else %}btn-success{% endif %}">
+      {% if door_open %}🔒 Fermer la porte{% else %}🔓 Ouvrir la porte{% endif %}
+    </button>
+  </form>
+</div>
+
+<!-- STYLE -->
+<style>
+  .garage-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .garage-container {
+    width: 240px;
+    height: 300px; /* Agrandi */
+    background: #ccc;
+    border: 4px solid #666;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .garage-panel {
+    position: absolute;
+    width: 100%;
+    height: 16.666%;
+    background: linear-gradient(to bottom, #999, #666);
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .panel-1 { top: 0; z-index: 6; }
+  .panel-2 { top: 16.666%; z-index: 5; }
+  .panel-3 { top: 33.333%; z-index: 4; }
+  .panel-4 { top: 50%; z-index: 3; }
+  .panel-5 { top: 66.666%; z-index: 2; }
+  .panel-6 { top: 83.333%; z-index: 1; }
+
+  .blinking-light {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px red;
+    animation: blink 1s infinite;
+    display: none;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.1; }
+  }
+</style>
+
+<!-- SCRIPT -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const panels = [...document.querySelectorAll('.garage-panel')];
+    const warningLight = document.getElementById('warningLight');
+    const garageSound = document.getElementById('garageSound');
+    const isOpen = {{ door_open|yesno:"true,false" }};
+
+    function animateDoor(opening = true) {
+      warningLight.style.display = 'block';
+      garageSound.play();
+
+      const step = opening ? -100 : 0;
+      panels.forEach((panel, index) => {
+        setTimeout(() => {
+          panel.style.transform = `translateY(${step}%)`;
+          if (index === panels.length - 1) {
+            setTimeout(() => {
+              warningLight.style.display = 'none';
+            }, 500);
+          }
+        }, index * 200);
+      });
+    }
+
+    if (isOpen) animateDoor(true);
+
+    form.addEventListener('submit', () => {
+      animateDoor(!isOpen);
+    });
+  });
+</script>
+{% endblock %}

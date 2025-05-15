@@ -1,0 +1,57 @@
+{% extends 'smarthome/base.html' %}
+{% load static %}
+{% block title %}Lights{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">💡 Panneau de Contrôle des Lumières</h2>
+
+  <div class="text-center mb-3">
+    🕒 Heure actuelle : <strong>{{ current_time }}</strong>
+    <br>
+    📍 Localisation : Rabat | ☀️ Simulation lumière du jour : {% if auto_mode %}Automatique{% else %}Manuelle{% endif %}
+  </div>
+
+  <div class="d-flex justify-content-center gap-3 mb-4">
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="on_all">
+      <button class="btn btn-success">Allumer Tout 🔆</button>
+    </form>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="off_all">
+      <button class="btn btn-secondary">Éteindre Tout 🌑</button>
+    </form>
+  </div>
+
+  <div class="row">
+    {% for room, state in lights.items %}
+    <div class="col-md-4 mb-4">
+      <div class="card text-center shadow">
+        <div class="card-body">
+          <h5 class="card-title">
+            {{ room|title|cut:"_" }} 
+            {% if state %}
+              <span class="badge bg-success">Allumée ✅</span>
+            {% else %}
+              <span class="badge bg-secondary">Éteinte ❌</span>
+            {% endif %}
+          </h5>
+          <div class="mb-3">
+            <i class="bi bi-lightbulb-fill" style="font-size: 2rem; color: {% if state %}orange{% else %}lightgray{% endif %};"></i>
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="room" value="{{ room }}">
+            <button class="btn {% if state %}btn-danger{% else %}btn-primary{% endif %}">
+              {% if state %}Éteindre ❌{% else %}Allumer 🔆{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
