@@ -3,6 +3,7 @@ routes:
   - path: /
     port: 80
     protocol: http
+
 build:
   buildCommand: pip install -r requirements.txt
   startCommand: gunicorn smarthome_project.wsgi:application
